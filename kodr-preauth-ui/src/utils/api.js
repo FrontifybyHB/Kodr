@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const baseURL = 'https://kodr-backend.vercel.app'; // Update this with your backend URL
+const baseURL = 'http://localhost:3000'; // Update this with your backend URL
 
 const api = axios.create({
     baseURL,

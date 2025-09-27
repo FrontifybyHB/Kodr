@@ -27,7 +27,7 @@ app.use(express.static("public"))
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(cors({ origin: config.CLIENT_URL, credentials: true }));
+app.use(cors({ origin: config.CLIENT_URL || "http://localhost:3000", credentials: true }));
 app.use(helmet());
 app.use(morgan('dev'));
 app.use(apiLimiter);
