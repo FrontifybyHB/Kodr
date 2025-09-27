@@ -22,7 +22,16 @@ const Register = () => {
         try {
             const response = await api.post("/auth/register", formData);
 
-            navigate("/dashboard")
+            // Check if login was successful
+            if (response.data?.token) {
+                // Store token in localStorage
+                localStorage.setItem('token', response.data.token);
+
+                // Redirect to dashboard
+                navigate('/dashboard');
+            } else {
+                setError("Login failed: Invalid response from server");
+            }
 
 
         } catch (err) {
