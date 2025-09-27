@@ -22,6 +22,7 @@ import { apiLimiter } from "./middlewares/ratelimit.middleware.js";
 // Initialize app
 const app = express();
 
+app.use(express.static("public"))
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
