@@ -1,0 +1,1 @@
+import{u as s,r as o,j as t}from"./index-CfjXfjbe.js";const c=()=>{const a=s();return o.useEffect(()=>{const e=new URLSearchParams(window.location.search).get("token");a(e?"/dashboard":"/login")},[a]),t.jsx("p",{children:"Loading..."})};export{c as default};
