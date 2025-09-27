@@ -1,48 +1,30 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import Input from "../components/mini-component/Input";
-import Button from "../components/mini-component/Button";
 import api from "../utils/api";
+import Input from '../components/mini-component/Input';
+import Button from '../components/mini-component/Button';
 
 const Register = () => {
-    const [formData, setFormData] = useState({
-        username: "",
-        email: "",
-        password: "",
-    });
+    const [formData, setFormData] = useState({ username: "", email: "", password: "" });
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
-
     const navigate = useNavigate();
 
-    // Handle input changes
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    // Local registration
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError("");
 
         try {
-            const response = await api.post("/auth/register", {
-                username: formData.username,
-                email: formData.email,
-                password: formData.password
-            });
+            const response = await api.post("/auth/register", formData);
 
-            // Redirect based on role
-            if (response.data.user.role === "admin") {
-                navigate("/admin");
-            }
-            else {
-                setFormData(formData.username = "")
-                setFormData(formData.email = "")
-                setFormData(formData.password = "")
-                navigate("/dashboard");
-            }
+            navigate("/dashboard")
+
+
         } catch (err) {
             setError(err.response?.data?.message || "Registration failed");
         } finally {
@@ -50,15 +32,12 @@ const Register = () => {
         }
     };
 
-    const handleReload = () => {
-    navigate('/login')
-    window.location.reload();
-  };
-
-    // Google signup
     const handleGoogleSignUp = () => {
-        // Redirect to backend Google OAuth route
         window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`;
+    };
+
+    const redirectToLogin = () => {
+        navigate('/login');
     };
 
     return (
@@ -103,14 +82,12 @@ const Register = () => {
                     </Button>
                 </form>
 
-                {/* Divider */}
                 <div className="flex items-center justify-center space-x-2">
                     <span className="border-b w-1/5 lg:w-1/4"></span>
                     <span className="text-gray-500 text-sm">OR</span>
                     <span className="border-b w-1/5 lg:w-1/4"></span>
                 </div>
 
-                {/* Google Sign Up */}
                 <button
                     onClick={handleGoogleSignUp}
                     className="flex items-center justify-center w-full py-2 space-x-2 border rounded-lg hover:bg-gray-100 transition duration-300"
@@ -121,9 +98,12 @@ const Register = () => {
 
                 <p className="text-center text-sm text-gray-600">
                     Already have an account?{" "}
-                    <Link onClick={handleReload} className="text-blue-500 hover:underline font-medium">
+                    <span
+                        onClick={redirectToLogin}
+                        className="text-blue-500 hover:underline font-medium cursor-pointer"
+                    >
                         Login here
-                    </Link>
+                    </span>
                 </p>
             </div>
         </div>

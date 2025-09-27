@@ -200,7 +200,7 @@ export const googleRedirectController = async (req, res, next) => {
         });
 
         // Redirect with token in query (SPA-friendly)
-        return res.redirect(`${config.CLIENT_URL}`);
+        return res.redirect(`${config.CLIENT_URL}/dashboard`);
     } catch (error) {
         next(error);
     }

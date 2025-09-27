@@ -3,11 +3,19 @@ import { Code, Play, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { MotionWrapper } from '@/components/ui/motion-wrapper';
 import heroImage from '@/assets/hero-image.jpg';
+import {useNavigate} from 'react-router-dom'
 
 interface HeroProps {
   onTryKodrClick: () => void;
   onDemoClick: () => void;
 }
+
+// const navigate = useNavigate()
+
+// const handleReload = () => {
+//   navigate('/register')
+//   window.location.reload();
+// };
 
 export function Hero({ onTryKodrClick, onDemoClick }: HeroProps) {
   const features = [
@@ -20,7 +28,7 @@ export function Hero({ onTryKodrClick, onDemoClick }: HeroProps) {
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0 code-pattern opacity-30" />
-      
+
       {/* Gradient Overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-background/90 via-background/80 to-background/90" />
 
@@ -40,7 +48,7 @@ export function Hero({ onTryKodrClick, onDemoClick }: HeroProps) {
 
             <MotionWrapper delay={0.1}>
               <p className="text-xl text-muted-foreground mb-8 max-w-2xl">
-                Paste any code. Kodr explains every line in plain language and generates 
+                Paste any code. Kodr explains every line in plain language and generates
                 a flowchart so you can see how it runs.
               </p>
             </MotionWrapper>
@@ -101,7 +109,7 @@ export function Hero({ onTryKodrClick, onDemoClick }: HeroProps) {
                   className="w-full h-auto rounded-xl"
                   loading="eager"
                 />
-                
+
                 {/* Floating Code Snippet Overlay */}
                 <motion.div
                   className="absolute top-4 right-4 glass rounded-lg p-3 text-xs font-mono"

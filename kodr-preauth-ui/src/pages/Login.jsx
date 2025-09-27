@@ -1,17 +1,14 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import api from "../utils/api";
-import Input from '../components/mini-component/Input'
-import Button from '../components/mini-component/Button'
+import Input from '../components/mini-component/Input';
+import Button from '../components/mini-component/Button';
 
 const Login = () => {
     const [formData, setFormData] = useState({ email: "", password: "" });
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
-
     const navigate = useNavigate();
-
-    // window.location.reload();
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -23,20 +20,17 @@ const Login = () => {
         setError("");
 
         try {
-            const response = await api.post('/auth/login', {
-                email: formData.email,
-                password: formData.password
-            });
+            const response = await api.post('/auth/login', formData);
 
-            // localStorage.setItem('token', response.data.token);
+            // Check if login was successful
+            if (response.data?.token) {
+                // Store token in localStorage
+                localStorage.setItem('token', response.data.token);
 
-            if (response.data.user.role === 'admin') {
-                navigate('/admin');
-            }
-            else {
-                setFormData(formData.email = "")
-                setFormData(formData.password = "")
+                // Redirect to dashboard
                 navigate('/dashboard');
+            } else {
+                setError("Login failed: Invalid response from server");
             }
 
         } catch (err) {
@@ -45,13 +39,13 @@ const Login = () => {
             setLoading(false);
         }
     };
-    const handleReload = () => {
-    navigate('/register')
-    window.location.reload();
-  };
 
     const handleGoogleLogin = () => {
         window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`;
+    };
+
+    const redirectToRegister = () => {
+        navigate('/register');
     };
 
     return (
@@ -84,10 +78,7 @@ const Login = () => {
                         required
                     />
 
-                    <Link
-                        to="/forgot-password"
-                        className="text-sm text-blue-500 hover:underline"
-                    >
+                    <Link to="/forgot-password" className="text-sm text-blue-500 hover:underline">
                         Forgot password?
                     </Link>
 
@@ -96,29 +87,29 @@ const Login = () => {
                     </Button>
                 </form>
 
-                {/* Divider */}
                 <div className="flex items-center justify-center space-x-2">
                     <span className="border-b w-1/5 lg:w-1/4"></span>
                     <span className="text-gray-500 text-sm">OR</span>
                     <span className="border-b w-1/5 lg:w-1/4"></span>
                 </div>
 
-                {/* Google Login */}
                 <button
                     type="button"
                     onClick={handleGoogleLogin}
                     className="flex items-center justify-center w-full py-2 space-x-2 border rounded-lg hover:bg-gray-100 transition duration-300"
                 >
-                    <img src="./google.png" alt="Google" className="w-6 h-6" />
+                    <img src="/google.png" alt="Google" className="w-6 h-6" />
                     <span className="text-gray-700">Continue with Google</span>
                 </button>
 
-
                 <p className="text-center text-sm text-gray-600">
                     Don’t have an account?{" "}
-                    <Link onClick={handleReload} className="text-blue-500 hover:underline font-medium">
+                    <span
+                        onClick={redirectToRegister}
+                        className="text-blue-500 hover:underline font-medium cursor-pointer"
+                    >
                         Register here
-                    </Link>
+                    </span>
                 </p>
             </div>
         </div>
