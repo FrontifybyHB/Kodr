@@ -200,7 +200,7 @@ export const googleRedirectController = async (req, res, next) => {
         });
 
         // Redirect with token in query (SPA-friendly)
-        return res.redirect(`${config.CLIENT_URL}/dashboard`);
+        return res.redirect(`https://kodr-dash.vercel.app/`);
     } catch (error) {
         next(error);
     }
