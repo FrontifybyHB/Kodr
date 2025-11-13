@@ -24,6 +24,8 @@ export function Hero({ onTryKodrClick, onDemoClick }: HeroProps) {
     { icon: Play, text: 'Interactive flowchart & downloadable explanations' },
   ];
 
+  const navigator = useNavigate();
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background Pattern */}
@@ -78,7 +80,7 @@ export function Hero({ onTryKodrClick, onDemoClick }: HeroProps) {
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                 <Button
                   size="lg"
-                  onClick={onTryKodrClick}
+                  onClick={()=> navigator('/register')}
                   className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-8 py-4 text-lg focus-ring transform hover:scale-105 transition-all duration-200 animate-glow"
                 >
                   Try Kodr — Explain Code
