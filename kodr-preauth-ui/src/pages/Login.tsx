@@ -1,47 +1,94 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import api from "../utils/api";
+import { doSignInWithEmailAndPassword, doSignInWithGoogle } from "../firebase/auth";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../firebase/firebase";
 import Input from '../components/mini-component/Input';
 import Button from '../components/mini-component/Button';
 
 const Login = () => {
-    const [formData, setFormData] = useState({ email: "", password: "" });
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
-    const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
+    // Check if user is already logged in
+    useState(() => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            if (user) {
+                navigate('/dashboard');
+            }
+        });
+        return () => unsubscribe();
+    });
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // Validation
+        if (!email || !password) {
+            setError("Please fill in all fields");
+            return;
+        }
+
+        if (password.length < 8) {
+            setError("Password must be at least 8 characters");
+            return;
+        }
+
         setLoading(true);
         setError("");
 
         try {
-            const response = await api.post('/auth/login', formData);
+            await doSignInWithEmailAndPassword(email, password);
+            // User will be redirected automatically by auth state change
+            navigate('/dashboard');
+        } catch (err) {
+            setLoading(false);
+            // Handle Firebase auth errors
+            const errorCode = err.code;
+            let message = "Failed to sign in. Please try again.";
 
-            // Check if login was successful
-            if (response.data?.token) {
-                // Store token in localStorage
-                localStorage.setItem('token', response.data.token);
-
-                // Redirect to dashboard
-                navigate('/dashboard');
-            } else {
-                setError("Login failed: Invalid response from server");
+            if (errorCode === 'auth/invalid-credential') {
+                message = "Invalid email or password.";
+            } else if (errorCode === 'auth/user-not-found') {
+                message = "No account found with this email.";
+            } else if (errorCode === 'auth/wrong-password') {
+                message = "Incorrect password.";
+            } else if (errorCode === 'auth/too-many-requests') {
+                message = "Too many failed attempts. Please try again later.";
+            } else if (errorCode === 'auth/user-disabled') {
+                message = "This account has been disabled.";
+            } else if (errorCode === 'auth/invalid-email') {
+                message = "Invalid email address.";
             }
 
-        } catch (err) {
-            setError(err.response?.data?.message || "Login failed");
-        } finally {
-            setLoading(false);
+            setError(message);
         }
     };
 
-    const handleGoogleLogin = () => {
-        window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`;
+    const handleGoogleLogin = async () => {
+        setLoading(true);
+        setError("");
+
+        try {
+            await doSignInWithGoogle();
+            // User will be redirected automatically by auth state change
+            navigate('/dashboard');
+        } catch (err) {
+            setLoading(false);
+            const errorCode = err.code;
+            let message = "Failed to sign in with Google.";
+
+            if (errorCode === 'auth/popup-closed-by-user') {
+                message = "Sign-in popup was closed.";
+            } else if (errorCode === 'auth/cancelled-popup-request') {
+                message = "Sign-in was cancelled.";
+            }
+
+            setError(message);
+        }
     };
 
     const redirectToRegister = () => {
@@ -62,8 +109,8 @@ const Login = () => {
                         label="Email"
                         type="email"
                         name="email"
-                        value={formData.email}
-                        onChange={handleChange}
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
                         placeholder="Enter your email"
                         required
                     />
@@ -72,8 +119,8 @@ const Login = () => {
                         label="Password"
                         type="password"
                         name="password"
-                        value={formData.password}
-                        onChange={handleChange}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
                         placeholder="Enter your password"
                         required
                     />
@@ -82,7 +129,7 @@ const Login = () => {
                         Forgot password?
                     </Link>
 
-                    <Button type="submit" fullWidth>
+                    <Button type="submit" fullWidth disabled={loading}>
                         {loading ? "Logging in..." : "Login"}
                     </Button>
                 </form>

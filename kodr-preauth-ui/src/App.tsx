@@ -8,10 +8,9 @@ import LoadingSpinner from './components/mini-component/LoadingSpinner';
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 
-const Login = lazy(() => import("./pages/Login.jsx"));
-const Register = lazy(() => import("./pages/Register.jsx"));
-const Home = lazy(() => import("./pages/Home"));
-const GoogleCallbackPage = lazy(() => import("./pages/GoogleCallbackPage"));
+const Login = lazy(() => import("./pages/Login.js"));
+const Register = lazy(() => import("./pages/Register.js"));
+const Home = lazy(() => import("./pages/Home.js"));
 
 const queryClient = new QueryClient();
 
@@ -35,7 +34,6 @@ const App = () => {
               <Route path="/dashboard" element={<Home />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
-              <Route path="/google/callback" element={<GoogleCallbackPage />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>
